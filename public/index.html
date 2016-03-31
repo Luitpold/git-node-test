@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="./socket.io/socketIoClient.js"></script>
+    <script src="./jQuery/jquery-2.2.2.js"></script>
+    <script src="./jQuery/jquery-migrate-1.2.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap-theme.css" />
+    <script type="text/javascript">
+      var socket = io.connect("http://localhost:8080/");
+      socket.on("welcome", function(message){
+        console.log("Date of Server: "+message.datum);
+      });
+      socket.emit("welcomeServer", {
+        name: "Luitpold"
+      });
+
+      $(document).ready(function(){
+        socket.on("newMessage",function(message){
+          $("#chatList").append(
+            $("<li></li>").text(message.username+" : ").append(
+              $("<span></span>").attr('style','color:red').text(message.message)
+          ));
+        });
+        $("#submit").click(function(){
+          var username = $("#username").val();
+          var message = $("#message").val();
+          $("#chatList").append(
+            $("<li></li>").text(username+" : "+message)
+          );
+          socket.emit("message",{
+            username : username,
+            message : message
+          });
+      });
+
+      });
+    </script>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div class="container">
+        <ul id="chatList"></ul>
+        <label for="">Benutzername:</label><input id="username" type="text" name="name" value=""/><br>
+        <label for="">Nachricht:</label><input id="message" type="text" name="name" value=""/><br>
+        <button id="submit" class="btn btn-primary" type="button" name="button">Absenden!</button>
+    </div>
+    Socket beispiel
+  </body>
+</html>
